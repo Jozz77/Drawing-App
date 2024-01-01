@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-BXZdQQuSd9+97BB70h9OWYxmHAeRb2Z2R5Ls+IV5Z6PCWhZbKxunUydpe0yb8+1Ib3j7i6e0D4Kuxm49sM+JAA==" crossorigin="anonymous" />
+
+</head>
+<body>
+    <div class="sidebar">
+        <ul>
+            <li>
+                <label for="color">Color:</label>
+                <input type="color" id="color" />
+            </li>
+            <li>
+                <label for="weight">Stroke:</label>
+                <input type="number" id="weight" min="2" max="200" value="3" />
+            </li>
+            <li>
+                <button id="previous"><i class="fas fa-heart">Previous</i></button>
+            </li>
+            <li>
+                <button id="clear"><i class="fas fa-heart">clear</i></button>
+            </li>
+        </ul>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.9.0/lib/p5.js"></script>
+    <script src="index.js"></script>
+</body>
+</html>
