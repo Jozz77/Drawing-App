@@ -4,6 +4,7 @@ const previous = document.getElementById('previous');
 const clear = document.getElementById('clear');
 const paths = [];
 let currentPath = [];
+const deletedPaths = [];
 
 function setup() {
     createCanvas(window.innerWidth, window.innerHeight);
@@ -53,4 +54,20 @@ clear.addEventListener('click', () => {
     paths.splice(0);
     background(255);
     console.log("Paths length after 'clear' click:", paths.length);
+});
+
+previousButton.addEventListener('click', () => {
+    const lastPaths = paths.splice(-2);
+    deletedPaths.push(...lastPaths);
+    background(255);
+    console.log("Paths length after 'previous' click:", paths.length);
+    console.log("Deleted paths:", deletedPaths.length);
+});
+
+clearButton.addEventListener('click', () => {
+    deletedPaths.push(...paths);
+    paths.splice(0);
+    background(255);
+    console.log("Paths length after 'clear' click:", paths.length);
+    console.log("Deleted paths:", deletedPaths.length);
 });
