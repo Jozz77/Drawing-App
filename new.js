@@ -1,6 +1,7 @@
 const savePngButton = document.getElementById('savePng');
 const saveJpegButton = document.getElementById('saveJpeg');
 const shareButton = document.getElementById('share');
+const shareImageButton = document.getElementById('shareImage');
 const colorInput = document.getElementById('color');
 const weightInput = document.getElementById('weight');
 const previousButton = document.getElementById('previous');
@@ -91,6 +92,7 @@ clearButton.addEventListener('click', () => {
 savePngButton.addEventListener('click', savePng);
 saveJpegButton.addEventListener('click', saveJpeg);
 shareButton.addEventListener('click', shareDrawing);
+shareImageButton.addEventListener('click', shareDrawingImage);
 
 function savePng() {
     // Save the canvas as an image (PNG format)
@@ -102,13 +104,77 @@ function saveJpeg() {
 }
 
 function shareDrawing() {
+    // Convert the canvas content to a data URL
+    const canvasDataURL = canvas.toDataURL('image/png');
+
+    // Upload the image to Imgur (you need to replace 'YOUR_CLIENT_ID' with your Imgur API client ID)
+    uploadToImgur(canvasDataURL, '3ab02e65618e972')
+        .then(imgurResponse => {
+            // Check if the Web Share API is supported
+            if (navigator.share) {
+                // Use the Web Share API to invoke the native sharing dialog
+                navigator.share({
+                    title: 'My Drawing',
+                    text: 'Check out my drawing!',
+                    url: imgurResponse.data.link
+                })
+                .then(() => console.log('Successfully shared'))
+                .catch((error) => console.error('Error sharing:', error));
+            } else {
+                // Fallback for devices or browsers that do not support the Web Share API
+                alert('Sharing is not supported on this device/browser.');
+            }
+        })
+        .catch(error => console.error('Error uploading to Imgur:', error));
+}
+
+async function uploadToImgur(dataURL, clientId) {
+    const response = await fetch('https://api.imgur.com/3/image', {
+        method: 'POST',
+        headers: {
+            Authorization: `Client-ID ${clientId}`,
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            image: dataURL.split(',')[1], // Remove the "data:image/png;base64," prefix
+            type: 'base64',
+        }),
+    });
+
+    if (!response.ok) {
+        throw new Error('Failed to upload to Imgur');
+    }
+
+    return response.json();
+}
+
+// share direct image
+function shareDrawingImage() {
+    // Convert the canvas content to a data URL
+    const canvasDataURL = canvas.toDataURL('image/png');
+
+    // Extract the base64-encoded part of the data URL (excluding the prefix)
+    const base64Data = canvasDataURL.split(',')[1];
+
+    // Convert base64 to a blob
+    const byteCharacters = atob(base64Data);
+    const byteNumbers = new Array(byteCharacters.length);
+    for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+    const byteArray = new Uint8Array(byteNumbers);
+    const blob = new Blob([byteArray], { type: 'image/png' });
+
+    // Create a file from the blob
+    const imageFile = new File([blob], 'my_drawing.png', { type: 'image/png' });
+
     // Check if the Web Share API is supported
     if (navigator.share) {
         // Use the Web Share API to invoke the native sharing dialog
         navigator.share({
+            files: [imageFile],
             title: 'My Drawing',
-            text: 'Check out my drawing!',
-            url: window.location.href
+            text: 'Check out my drawing!'
         })
         .then(() => console.log('Successfully shared'))
         .catch((error) => console.error('Error sharing:', error));
@@ -117,3 +183,5 @@ function shareDrawing() {
         alert('Sharing is not supported on this device/browser.');
     }
 }
+
+
