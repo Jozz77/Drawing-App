@@ -1,3 +1,4 @@
+const saveButton = document.getElementById('save');
 const colorInput = document.getElementById('color');
 const weightInput = document.getElementById('weight');
 const previousButton = document.getElementById('previous');
@@ -6,8 +7,7 @@ const clearButton = document.getElementById('clear');
 const paths = [];
 const deletedPaths = [];
 let currentPath = [];
-const savePngButton = document.getElementById('savePng');
-const saveJpegButton = document.getElementById('saveJpeg');
+let pathsBeforeDeletion = null;
 
 function setup() {
     createCanvas(window.innerWidth, window.innerHeight);
@@ -43,25 +43,33 @@ function draw() {
     });
 }
 
-function mousePressed() {
+function touchStarted() {
     currentPath = [];
     paths.push(currentPath);
+    return false; // Prevent default
+}
 
-    console.log("Current path length:", currentPath.length);
-    console.log("Paths length:", paths.length);
+function touchMoved() {
+    return false; // Prevent default
+}
+
+function touchEnded() {
+    pathsBeforeDeletion = paths.length; // Save the length before deletion
+    return false; // Prevent default
 }
 
 previousButton.addEventListener('click', () => {
     const lastPaths = paths.splice(-2);
     deletedPaths.push(lastPaths);
+    pathsBeforeDeletion = paths.length; // Save the length before deletion
     background(255);
     console.log("Paths length after 'previous' click:", paths.length);
     console.log("Deleted paths:", deletedPaths.length);
 });
 
 restoreButton.addEventListener('click', () => {
-    const lastDeletedPaths = deletedPaths.pop();
-    if (lastDeletedPaths) {
+    if (deletedPaths.length > 0) {
+        const lastDeletedPaths = deletedPaths.pop();
         paths.push(...lastDeletedPaths);
         background(255);
         console.log("Paths length after 'restore' click:", paths.length);
@@ -71,20 +79,17 @@ restoreButton.addEventListener('click', () => {
 
 clearButton.addEventListener('click', () => {
     deletedPaths.push(...paths);
+    pathsBeforeDeletion = paths.length; // Save the length before clearing
     paths.splice(0);
     background(255);
     console.log("Paths length after 'clear' click:", paths.length);
     console.log("Deleted paths:", deletedPaths.length);
 });
-savePngButton.addEventListener('click', savePngDrawing);
-saveJpegButton.addEventListener('click', saveJpegDrawing);
 
-function savePngDrawing() {
+saveButton.addEventListener('click', saveDrawing);
+
+function saveDrawing() {
     // Save the canvas as an image (PNG format)
     saveCanvas('my_drawing', 'png');
     // Alternatively, you can use saveCanvas('my_drawing', 'jpg') for JPEG format
-}
-function saveJpegDrawing() {
-    // Save the canvas as an image (PNG format)
-    saveCanvas('my_drawing', 'jpeg');
 }
