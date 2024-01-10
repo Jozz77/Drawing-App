@@ -1,4 +1,6 @@
-const saveButton = document.getElementById('save');
+const savePngButton = document.getElementById('savePng');
+const saveJpegButton = document.getElementById('saveJpeg');
+const shareButton = document.getElementById('share');
 const colorInput = document.getElementById('color');
 const weightInput = document.getElementById('weight');
 const previousButton = document.getElementById('previous');
@@ -86,10 +88,32 @@ clearButton.addEventListener('click', () => {
     console.log("Deleted paths:", deletedPaths.length);
 });
 
-saveButton.addEventListener('click', saveDrawing);
+savePngButton.addEventListener('click', savePng);
+saveJpegButton.addEventListener('click', saveJpeg);
+shareButton.addEventListener('click', shareDrawing);
 
-function saveDrawing() {
+function savePng() {
     // Save the canvas as an image (PNG format)
     saveCanvas('my_drawing', 'png');
     // Alternatively, you can use saveCanvas('my_drawing', 'jpg') for JPEG format
+}
+function saveJpeg() {
+    saveCanvas('my_drawing', 'jpeg');
+}
+
+function shareDrawing() {
+    // Check if the Web Share API is supported
+    if (navigator.share) {
+        // Use the Web Share API to invoke the native sharing dialog
+        navigator.share({
+            title: 'My Drawing',
+            text: 'Check out my drawing!',
+            url: window.location.href
+        })
+        .then(() => console.log('Successfully shared'))
+        .catch((error) => console.error('Error sharing:', error));
+    } else {
+        // Fallback for devices or browsers that do not support the Web Share API
+        alert('Sharing is not supported on this device/browser.');
+    }
 }
