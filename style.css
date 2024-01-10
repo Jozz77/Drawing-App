@@ -64,3 +64,6 @@ body {
     font-size: 12px;
     margin-bottom: 3px;
 }
+body.drawing {
+    cursor: url('./pen.png') 0 45, auto;
+}

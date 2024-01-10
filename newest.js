@@ -7,6 +7,24 @@ const weightInput = document.getElementById('weight');
 const previousButton = document.getElementById('previous');
 const restoreButton = document.getElementById('restore');
 const clearButton = document.getElementById('clear');
+
+document.getElementById('drawTriangle').addEventListener('click', () => {
+    isDrawingShape = true;
+    currentShape = 'triangle';
+});
+
+document.getElementById('drawCircle').addEventListener('click', () => {
+    isDrawingShape = true;
+    currentShape = 'circle';
+});
+
+document.getElementById('drawSquare').addEventListener('click', () => {
+    isDrawingShape = true;
+    currentShape = 'square';
+});
+
+
+
 const paths = [];
 const deletedPaths = [];
 let currentPath = [];
@@ -14,6 +32,8 @@ let pathsBeforeDeletion = null;
 
 let penCursor;
 let canvas; // Define the canvas variable
+let isDrawingShape = false;
+let currentShape = null;
 
 function preload() {
     // Load the pen cursor image
@@ -47,6 +67,10 @@ function draw() {
     } else {
         // Remove the class when not drawing
         document.body.classList.remove('drawing');
+    }
+
+    if (isDrawingShape) {
+        drawCurrentShape();
     }
 
     paths.forEach(path => {
@@ -117,6 +141,31 @@ function savePng() {
 }
 function saveJpeg() {
     saveCanvas('my_drawing', 'jpeg');
+}
+
+function drawCurrentShape() {
+    noFill();
+    const shapeSize = 50; // Adjust the size as needed
+
+    if (currentShape === 'triangle') {
+        // Draw a triangle at the mouse position
+        triangle(mouseX, mouseY - shapeSize / 2, mouseX - shapeSize / 2, mouseY + shapeSize / 2, mouseX + shapeSize / 2, mouseY + shapeSize / 2);
+    } else if (currentShape === 'circle') {
+        // Draw a circle at the mouse position
+        ellipse(mouseX, mouseY, shapeSize, shapeSize);
+    } else if (currentShape === 'square') {
+        // Draw a square at the mouse position
+        rectMode(CENTER);
+        rect(mouseX, mouseY, shapeSize, shapeSize);
+    }
+}
+
+function mouseClicked() {
+    // Stop drawing the shape on mouse click
+    if (isDrawingShape) {
+        isDrawingShape = false;
+        currentShape = null;
+    }
 }
 
 function shareDrawing() {
